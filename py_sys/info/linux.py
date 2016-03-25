@@ -1,27 +1,25 @@
 # coding=utf-8
 
+import platform
+
 from py_sys.utils import decorator
 
 class LinuxInfo():
     @decorator.check_os(['linux'])
     @decorator.check_file('/proc/cpuinfo')
     def cpu(self):
-        nprocs = 0
-        cpu_info = {}
-        proc_info = {}
+        cpu_info = []
         with open('/proc/cpuinfo') as f:
+            cpu = {}
             for line in f:
                 if not line.strip():
-                    #end of one processor
-                    cpu_info['proc%s' % nprocs] = proc_info
-                    nprocs = nprocs + 1
-                    #Reset
-                    proc_info = {}
+                    cpu_info.append(cpu)
+                    cpu = {}
                 else:
                     if len(line.split(':')) == 2:
-                        proc_info[line.split(':')[0].strip()] = line.split(':')[1].strip()
+                        cpu[line.split(':')[0].strip()] = line.split(':')[1].strip()
                     else:
-                        proc_info[line.split(':')[0].strip()] = ''
+                        cpu[line.split(':')[0].strip()] = ''
         return cpu_info
     
     @decorator.check_os(['linux'])
@@ -48,7 +46,20 @@ class LinuxInfo():
     def filesystem(self):
         pass
     
-    def version(self):
-        pass
+    @decorator.check_os(['linux'])
+    @decorator.check_file(['/proc/uptime', '/proc/version'])
+    def system(self):
+        system = {
+                  'hostname' : platform.node(),
+                  'system'  : platform.system(),
+                  'machine' : platform.machine(),
+                  'architecture' : platform.architecture(),
+                  'release' : platform.release(),
+                  'dist' : platform.dist(),
+                  'version' : open('/proc/version').readline(),
+                  'uptime' : open('/proc/uptime').readline(),
+                  'python' : platform.python_version()
+                  }
+        return system
 
 

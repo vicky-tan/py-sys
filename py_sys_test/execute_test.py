@@ -14,3 +14,4 @@ class ExecuteTest(unittest.TestCase):
             self.assertTrue('Microsoft Windows' in output[0])
         elif os_type == 'linux':
             output = execute.run('uname -a', 'utf-8', True)
+            self.assertTrue('GNU/Linux' in output[0])
