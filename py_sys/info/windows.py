@@ -1,7 +1,5 @@
 # coding=utf-8
 
-from ctypes import *
-
 from py_sys.utils import decorator
 
 class WindowsInfo():

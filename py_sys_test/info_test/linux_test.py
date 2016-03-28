@@ -44,9 +44,3 @@ class LinuxInfoTest(unittest.TestCase):
         self.assertGreaterEqual(len(iface_info), 1)
         self.assertEquals(len(iface_info[0]), 17)
         
-    def test_system(self):
-        linux_info = linux.LinuxInfo()
-        sys_info = linux_info.system()
-        self.assertIsNotNone(sys_info.get('hostname'))
-        self.assertTrue(sys_info.has_key('uptime'))
-        self.assertTrue(sys_info.has_key('version'))

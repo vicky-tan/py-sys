@@ -130,22 +130,6 @@ class LinuxInfo():
                     iface_info.append(iface)
         return iface_info
     
-    @decorator.check_os(['linux'])
-    @decorator.check_file(['/proc/uptime', '/proc/version'])
-    def system(self):
-        system = {
-                  'hostname' : platform.node(),
-                  'system'  : platform.system(),
-                  'machine' : platform.machine(),
-                  'architecture' : platform.architecture(),
-                  'release' : platform.release(),
-                  'dist' : platform.dist(),
-                  'version' : open('/proc/version').readline(),
-                  'uptime' : open('/proc/uptime').readline(),
-                  'python' : platform.python_version()
-                  }
-        return system
-    
     def __exec(self, cmd, skip, action):
         exec_result = execute.run(cmd)
         if exec_result:
