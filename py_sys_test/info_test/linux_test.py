@@ -18,6 +18,11 @@ class LinuxInfoTest(unittest.TestCase):
         self.assertTrue(mem_info.has_key('MemTotal'))
         self.assertTrue(mem_info.has_key('MemFree'))
         
+    def test_net_if(self):
+        linux_info = linux.LinuxInfo()
+        iface_info = linux_info.net_if()
+        self.assertGreaterEqual(len(iface_info), 1)
+        
     def test_system(self):
         linux_info = linux.LinuxInfo()
         sys_info = linux_info.system()
