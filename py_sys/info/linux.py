@@ -35,7 +35,7 @@ class LinuxInfo():
     @decorator.check_os(['linux'])
     def filesystem(self):
         df_info = []
-        exec_result = execute.run('df -a -BK')
+        exec_result = execute.run('df -a -BK -T')
         if exec_result:
             line_count, skip_line = 0, 1
             for line in exec_result:
@@ -43,7 +43,7 @@ class LinuxInfo():
                 if skip_line >= line_count:
                     continue
                 df_items = self.__split(line, ' ')
-                columns = ['fs','total','used', 'free', 'usage', 'mount']
+                columns = ['fs', 'type', 'total','used', 'free', 'usage', 'mount']
                 df = self.__map(df_items, columns)
                 if len(df) > 0:
                     df_info.append(df)
