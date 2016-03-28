@@ -3,7 +3,8 @@
 import platform
 
 from py_sys.utils import decorator
-
+from py_sys import execute
+ 
 class LinuxInfo():
     @decorator.check_os(['linux'])
     @decorator.check_file('/proc/cpuinfo')
@@ -32,11 +33,22 @@ class LinuxInfo():
         return mem_info
     
     @decorator.check_os(['linux'])
-    @decorator.check_file('/proc/mounts')
-    def partitions(self):
-        pass
-            
-            
+    def filesystem(self):
+        df_info = []
+        exec_result = execute.run('df -a -BK')
+        if exec_result:
+            line_count, skip_line = 0, 1
+            for line in exec_result:
+                line_count += 1
+                if skip_line >= line_count:
+                    continue
+                df_items = self.__split(line, ' ')
+                columns = ['fs','total','used', 'free', 'usage', 'mount']
+                df = self.__map(df_items, columns)
+                if len(df) > 0:
+                    df_info.append(df)
+        return df_info
+    
     @decorator.check_os(['linux'])
     @decorator.check_file('/proc/net/dev')
     def net_if(self):
