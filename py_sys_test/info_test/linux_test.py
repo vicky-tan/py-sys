@@ -18,19 +18,29 @@ class LinuxInfoTest(unittest.TestCase):
         self.assertTrue(mem_info.has_key('MemTotal'))
         self.assertTrue(mem_info.has_key('MemFree'))
         
+    def test_top(self):
+        linux_info = linux.LinuxInfo()
+        summary, ps_info = linux_info.top()
+        self.assertTrue(summary.has_key('uptime'))
+        self.assertTrue(summary.has_key('cpu-usage'))
+        self.assertGreaterEqual(len(ps_info), 1)
+        self.assertEquals(len(ps_info[0]), 12)
+        
+    def test_ps(self): 
+        linux_info = linux.LinuxInfo()
+        ps_info = linux_info.ps(False)
+        self.assertGreaterEqual(len(ps_info), 1)
+        self.assertEquals(len(ps_info[0]), 8)
+        
     def test_filesystem(self):
         linux_info = linux.LinuxInfo()
         df_info = linux_info.filesystem()
         self.assertGreaterEqual(len(df_info), 1)
+        self.assertEquals(len(df_info[0]), 7)
         
     def test_net_if(self):
         linux_info = linux.LinuxInfo()
         iface_info = linux_info.net_if()
         self.assertGreaterEqual(len(iface_info), 1)
+        self.assertEquals(len(iface_info[0]), 17)
         
-    def test_system(self):
-        linux_info = linux.LinuxInfo()
-        sys_info = linux_info.system()
-        self.assertIsNotNone(sys_info.get('hostname'))
-        self.assertTrue(sys_info.has_key('uptime'))
-        self.assertTrue(sys_info.has_key('version'))

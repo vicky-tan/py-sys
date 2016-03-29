@@ -29,4 +29,3 @@ class WindowsInfo():
                 info[prop_key] = prop_value
             info_list.append(info)
         return info_list
-
