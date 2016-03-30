@@ -14,6 +14,16 @@ class WindowsInfoTest(unittest.TestCase):
         windows_info = windows.WindowsInfo()
         mem_info = windows_info.memory()
         self.assertGreaterEqual(len(mem_info), 1)
+
+    def test_top(self):
+        windows_info = windows.WindowsInfo()
+        top_info = windows_info.top()
+        self.assertGreaterEqual(len(top_info), 1)        
+        
+    def test_ps(self):
+        windows_info = windows.WindowsInfo()
+        ps_info = windows_info.ps()
+        self.assertGreaterEqual(len(ps_info), 1)
         
     def test_filesystem(self):
         windows_info = windows.WindowsInfo()

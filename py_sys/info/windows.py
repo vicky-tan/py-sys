@@ -22,11 +22,16 @@ class WindowsInfo():
     
     @decorator.check_os(['windows'])
     def top(self):
-        pass
+        if self.pv == 32:
+            top = self.w.Win32_PerfFormattedData_PerfProc_Process() 
+        else:
+            top = self.w.Win_PerfFormattedData_PerfProc_Process()
+        return self.__info(top)
     
     @decorator.check_os(['windows'])
     def ps(self):
-        pass
+        ps = self.w.Win32_Process() if self.pv == 32 else self.w.Win_Process()
+        return self.__info(ps)
     
     @decorator.check_os(['windows'])
     def filesystem(self):
