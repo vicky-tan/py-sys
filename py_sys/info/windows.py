@@ -12,14 +12,33 @@ class WindowsInfo():
     
     @decorator.check_os(['windows'])
     def cpu(self):
-        func = self.w.Win32_Processor() if self.pv == 32 else self.w.Win_Processor()
-        return self.__info(func)
+        cpu = self.w.Win32_Processor() if self.pv == 32 else self.w.Win_Processor()
+        return self.__info(cpu)
     
     @decorator.check_os(['windows'])
     def memory(self):
-        func = self.w.Win32_PhysicalMemory() if self.pv == 32 else self.w.Win_PhysicalMemory()
-        return self.__info(func)
-            
+        mem = self.w.Win32_PhysicalMemory() if self.pv == 32 else self.w.Win_PhysicalMemory()
+        return self.__info(mem)
+    
+    @decorator.check_os(['windows'])
+    def top(self):
+        pass
+    
+    @decorator.check_os(['windows'])
+    def ps(self):
+        pass
+    
+    @decorator.check_os(['windows'])
+    def filesystem(self):
+        disk_drive = self.w.Win32_DiskDrive () if self.pv == 32 else self.w.Win_DiskDrive ()
+        logic_disk = self.w.Win32_LogicalDisk() if self.pv == 32 else self.w.LogicalDisk ()
+        return self.__info(disk_drive), self.__info(logic_disk)
+    
+    @decorator.check_os(['windows'])
+    def net_if(self):
+        net = self.w.Win32_NetworkAdapterConfiguration()  if self.pv == 32 else self.w.Win_NetworkAdapterConfiguration()
+        return self.__info(net)
+    
     def __info(self, func):
         info_list = []
         for item in func:

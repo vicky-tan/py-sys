@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import platform
 import re
 
 from py_sys.utils import decorator
