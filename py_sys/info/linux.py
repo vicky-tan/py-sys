@@ -25,14 +25,14 @@ class LinuxInfo():
         return cpu_info
     
     @decorator.check_os(['linux'])
-    @decorator.check_cmd(['top -version > /dev/null'])
+    @decorator.check_cmd(['command -v top'])
     def top(self):
         summary = {}
         ps_list = []
         
         exec_result = execute.run('top -n 1 -b')
         if exec_result and len(exec_result) > 6:
-            pattern = re.compile('top - (.*) up  (.*),  (\d+) users,  load average: (.*)')
+            pattern = re.compile('top\s+-\s+(.*)\s+up\s+(.*),\s+(\d+)\s+users,\s+load average:\s+(.*)')
             match = pattern.match(exec_result[0])
             if match:
                 items = match.groups()
@@ -63,7 +63,7 @@ class LinuxInfo():
         return summary, ps_list
                     
     @decorator.check_os(['linux'])
-    @decorator.check_cmd(['ps --version > /dev/null'])
+    @decorator.check_cmd(['command -v ps'])
     def ps(self, system = True):
         ps_info = []
         
@@ -96,6 +96,7 @@ class LinuxInfo():
         return mem_info
     
     @decorator.check_os(['linux'])
+    @decorator.check_cmd(['command -v df'])
     def filesystem(self):
         df_info = []
         
@@ -128,6 +129,28 @@ class LinuxInfo():
                     iface['iface'] = iface_name[:len(iface_name) -1]
                     iface_info.append(iface)
         return iface_info
+    
+    @decorator.check_os(['linux'])
+    @decorator.check_cmd(['command -v netstat'])
+    def netstat(self, protocol = 'tcp'):
+        netstat_info = []
+        
+        def action(line):
+            netstat_items = self.__split(line, ' ', True, 8)
+            columns = ['protocol', 'receive', 'send', 'local', 'remote', 'state', 'program']
+            ns = self.__map(netstat_items, columns)
+            if len(ns) > 0:
+                netstat_info.append(ns)
+                
+        if protocol == None:
+            return netstat_info
+        
+        if str(protocol).lower() == 'tcp':
+            self.__exec('netstat -antp', 2, action)
+        elif str(protocol).lower() == 'udp':
+            self.__exec('netstat -anup', 2, action)
+            
+        return netstat_info
     
     def __exec(self, cmd, skip, action):
         exec_result = execute.run(cmd)

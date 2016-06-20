@@ -44,3 +44,9 @@ class LinuxInfoTest(unittest.TestCase):
         self.assertGreaterEqual(len(iface_info), 1)
         self.assertEquals(len(iface_info[0]), 17)
         
+    def test_netstat(self):
+        linux_info = linux.LinuxInfo()
+        netstat_info = linux_info.netstat('tcp')
+        self.assertGreaterEqual(len(netstat_info), 1)
+        self.assertEquals(len(netstat_info[0]), 7)
+        
