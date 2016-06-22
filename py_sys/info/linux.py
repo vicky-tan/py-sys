@@ -25,7 +25,7 @@ class LinuxInfo():
         return cpu_info
     
     @decorator.check_os(['linux'])
-    @decorator.check_cmd(['command -v top'])
+    @decorator.check_cmd(['command -v top > /dev/null'])
     def top(self):
         summary = {}
         ps_list = []
@@ -63,7 +63,7 @@ class LinuxInfo():
         return summary, ps_list
                     
     @decorator.check_os(['linux'])
-    @decorator.check_cmd(['command -v ps'])
+    @decorator.check_cmd(['command -v ps > /dev/null'])
     def ps(self, system = True):
         ps_info = []
         
@@ -96,7 +96,7 @@ class LinuxInfo():
         return mem_info
     
     @decorator.check_os(['linux'])
-    @decorator.check_cmd(['command -v df'])
+    @decorator.check_cmd(['command -v df > /dev/null'])
     def filesystem(self):
         df_info = []
         
@@ -136,8 +136,8 @@ class LinuxInfo():
         netstat_info = []
         
         def action(line):
-            netstat_items = self.__split(line, ' ', True, 8)
-            columns = ['protocol', 'receive', 'send', 'local', 'remote', 'state', 'program']
+            netstat_items = self.__split(line, ' ', True, 7)
+            columns = ['protocol', 'recv-q', 'send-q', 'local', 'remote', 'state', 'program']
             ns = self.__map(netstat_items, columns)
             if len(ns) > 0:
                 netstat_info.append(ns)
@@ -149,8 +149,28 @@ class LinuxInfo():
             self.__exec('netstat -antp', 2, action)
         elif str(protocol).lower() == 'udp':
             self.__exec('netstat -anup', 2, action)
+        else:
+            self.__exec('netstat -antup', 2, action)
             
         return netstat_info
+    
+    @decorator.check_os(['linux'])
+    @decorator.check_cmd(['command -v iostat'])
+    def iostat(self):
+        io_info = {}
+        
+        def action(line):
+            iostat_items = self.__split(line, ' ', True)
+            columns = ['device', 'read_rqm', 'write_rqm',  'read', 'write', 'read_kb', 'write_kb', 
+                       'avgrq-sz', 'avgqu-sz', 'await', 'read_await', 'w_await', 'svctm', 'cpu']
+            io_stat = self.__map(iostat_items, columns)
+            for key in io_stat:
+                value = io_stat.get(key)
+                if value is not None:
+                    io_info[key] = value
+        
+        self.__exec('iostat -d -k -x -N', 3, action)
+        return io_info
     
     def __exec(self, cmd, skip, action):
         exec_result = execute.run(cmd)
