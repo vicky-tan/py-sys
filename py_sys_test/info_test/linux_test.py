@@ -50,3 +50,7 @@ class LinuxInfoTest(unittest.TestCase):
         self.assertGreaterEqual(len(netstat_info), 1)
         self.assertEquals(len(netstat_info[0]), 7)
         
+    def test_iostat(self):
+        linux_info = linux.LinuxInfo()
+        iostat_info = linux_info.iostat()
+        

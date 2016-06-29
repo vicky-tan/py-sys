@@ -35,11 +35,11 @@ class WatchJob(job.Job):
         
     def execute(self):
         linux_info = linux.LinuxInfo()
-        ps_info = linux_info.ps(True)
+        ps_info = linux_info.ps(False)
         if ps_info is not None:
             for ps_item in ps_info:
                 _pid = ps_item.get('pid')
-                if self.pid == _pid:
+                if str(self.pid) == _pid:
                     return
         
         execute.run(self.action)
