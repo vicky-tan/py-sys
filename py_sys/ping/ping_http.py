@@ -47,7 +47,6 @@ class PingHTTP(object):
             raise IOError('URL is None')
         
         url = url.lower()
-        port = 443 if url.startswith('https') and port is 80 else port
 
         for _ in xrange(count):
             ping_result = {'url' : url, 'port' : port}
