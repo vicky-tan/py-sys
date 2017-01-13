@@ -1,11 +1,56 @@
 # coding=utf-8
 
+import os
 import re
 
 from py_sys.utils import decorator
 from py_sys import execute
  
+_CLOCK_TICKS = os.sysconf(os.sysconf_names["SC_CLK_TCK"])
+_PAGESIZE = os.sysconf("SC_PAGE_SIZE")
+
 class LinuxInfo():
+    
+    def get_boot_time(self):
+        f = open('/proc/stat', 'r')
+        try:
+            for line in f:
+                if line.startswith('btime'):
+                    return float(line.strip().split()[1])
+            raise RuntimeError("line not found")
+        finally:
+            f.close()
+    
+    def get_system_cpu_times(self):
+        f = open('/proc/stat', 'r')
+        try:
+            values = f.readline().split()
+        finally:
+            f.close()
+    
+        values = values[1:8]
+        values = tuple([float(x) / _CLOCK_TICKS for x in values])
+        return values
+    
+    def get_system_per_cpu_times(self):
+        cpus = []
+        f = open('/proc/stat', 'r')
+        # get rid of the first line who refers to system wide CPU stats
+        try:
+            f.readline()
+            for line in f.readlines():
+                if line.startswith('cpu'):
+                    values = line.split()[1:8]
+                    values = tuple([float(x) / _CLOCK_TICKS for x in values])
+                    entry = values
+                    cpus.append(entry)
+            return cpus
+        finally:
+            f.close()
+            
+    def get_pid_list(self):
+        pids = [int(x) for x in os.listdir('/proc') if x.isdigit()]
+        return pids
     
     @decorator.check_os(['linux'])
     @decorator.check_file('/proc/cpuinfo')

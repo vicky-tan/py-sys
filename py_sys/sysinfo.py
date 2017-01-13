@@ -1,12 +1,13 @@
 # coding=utf-8
 
 import platform
-from info import linux, windows
 
 os_t = platform.system().lower()
 if os_t == 'linux':
+    from info import linux
     __os = linux.LinuxInfo()
 elif os_t == 'windows':
+    from info import windows
     __os = windows.WindowsInfo()
 else:
     raise 'Not Support : ' + os_t
