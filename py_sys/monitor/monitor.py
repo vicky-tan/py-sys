@@ -14,3 +14,6 @@ class Monitor(job.Job):
         time_stamp = time.time()
         time_now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_stamp))
         return time_now
+    
+    def output(self, message):
+        print message
